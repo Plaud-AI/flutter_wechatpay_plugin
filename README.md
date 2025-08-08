@@ -16,7 +16,7 @@ Add dependency to your `pubspec.yaml` file:
 
 ```yaml
 dependencies:
-  flutter_wechatpay_plugin: ^1.0.0
+  flutter_wechatpay_plugin: ^0.0.1
 ```
 
 ## Usage

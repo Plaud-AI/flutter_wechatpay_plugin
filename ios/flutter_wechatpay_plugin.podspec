@@ -9,7 +9,7 @@ Pod::Spec.new do |s|
   s.description      = <<-DESC
 A Flutter plugin for WeChat Pay payment integration, supporting Android platform.
                        DESC
-  s.homepage         = 'https://github.com/your-username/flutter_wechatpay_plugin'
+  s.homepage         = 'https://github.com/Plaud-AI/flutter_wechatpay_plugin'
   s.license          = { :file => '../LICENSE' }
   s.author           = { 'PlaudAI' => 'Neo.Wang@plaud.ai' }
   s.source           = { :path => '.' }
