@@ -1,0 +1,218 @@
+/*
+ * Copyright (c) 2025 PlaudAI. All rights reserved.
+ * Author: Neo.Wang@plaud.ai
+ */
+
+package com.plaud.flutter_wechatpay_plugin
+
+import android.app.Activity
+import android.content.Context
+import android.content.Intent
+import android.content.pm.PackageManager
+import androidx.annotation.NonNull
+import io.flutter.embedding.engine.plugins.FlutterPlugin
+import io.flutter.embedding.engine.plugins.activity.ActivityAware
+import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding
+import io.flutter.plugin.common.MethodCall
+import io.flutter.plugin.common.MethodChannel
+import io.flutter.plugin.common.MethodChannel.MethodCallHandler
+import io.flutter.plugin.common.MethodChannel.Result
+import io.flutter.plugin.common.PluginRegistry
+import com.tencent.mm.opensdk.modelpay.PayReq
+import com.tencent.mm.opensdk.openapi.IWXAPI
+import com.tencent.mm.opensdk.openapi.WXAPIFactory
+import java.util.concurrent.Executors
+import java.util.concurrent.CompletableFuture
+import java.util.concurrent.TimeUnit
+
+/** FlutterWechatpayPlugin - WeChat Pay payment integration for Flutter */
+class FlutterWechatpayPlugin: FlutterPlugin, MethodCallHandler, ActivityAware {
+  /// The MethodChannel that will the communication between Flutter and native Android
+  ///
+  /// This local reference serves to register the plugin with the Flutter Engine and unregister it
+  /// when the Flutter Engine is detached from the Activity
+  private lateinit var channel : MethodChannel
+  private lateinit var context: Context
+  private var activity: Activity? = null
+  private val executor = Executors.newSingleThreadExecutor()
+  
+  // WeChat API instance
+  private var wxApi: IWXAPI? = null
+  
+  // WeChat configuration
+  private var appId: String = ""
+  private var partnerId: String = ""
+  private var universalLink: String = ""
+
+  override fun onAttachedToEngine(flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
+    channel = MethodChannel(flutterPluginBinding.binaryMessenger, "flutter_wechatpay_plugin")
+    channel.setMethodCallHandler(this)
+    context = flutterPluginBinding.applicationContext
+  }
+
+  override fun onMethodCall(call: MethodCall, result: Result) {
+    when (call.method) {
+      "getPlatformVersion" -> {
+        result.success("${android.os.Build.VERSION.RELEASE}")
+      }
+      "initWechatPay" -> {
+        val appId = call.argument<String>("appId") ?: ""
+        val partnerId = call.argument<String>("partnerId") ?: ""
+        val universalLink = call.argument<String>("universalLink") ?: ""
+        
+        if (appId.isNotEmpty() && partnerId.isNotEmpty()) {
+          this.appId = appId
+          this.partnerId = partnerId
+          this.universalLink = universalLink
+          
+          // Initialize WeChat API
+          wxApi = WXAPIFactory.createWXAPI(context, appId, false)
+          val success = wxApi?.registerApp(appId) ?: false
+          result.success(success)
+        } else {
+          result.success(false)
+        }
+      }
+      "registerApp" -> {
+        val appId = call.argument<String>("appId") ?: ""
+        val universalLink = call.argument<String>("universalLink") ?: ""
+        
+        if (appId.isNotEmpty()) {
+          wxApi = WXAPIFactory.createWXAPI(context, appId, false)
+          val success = wxApi?.registerApp(appId) ?: false
+          result.success(success)
+        } else {
+          result.success(false)
+        }
+      }
+      "pay" -> {
+        val partnerId = call.argument<String>("partnerId") ?: ""
+        val prepayId = call.argument<String>("prepayId") ?: ""
+        val packageValue = call.argument<String>("packageValue") ?: ""
+        val nonceStr = call.argument<String>("nonceStr") ?: ""
+        val timeStamp = call.argument<String>("timeStamp") ?: ""
+        val sign = call.argument<String>("sign") ?: ""
+        
+        if (partnerId.isEmpty() || prepayId.isEmpty() || packageValue.isEmpty() || 
+            nonceStr.isEmpty() || timeStamp.isEmpty() || sign.isEmpty()) {
+          result.error("INVALID_PARAMETERS", "All payment parameters are required", null)
+          return
+        }
+        
+        if (activity == null) {
+          result.error("NO_ACTIVITY", "Activity is not available", null)
+          return
+        }
+        
+        if (wxApi == null) {
+          result.error("WECHAT_NOT_INITIALIZED", "WeChat API is not initialized", null)
+          return
+        }
+        
+        // Use WeChat SDK for payment
+        executor.execute {
+          try {
+            val payReq = PayReq()
+            payReq.appId = this.appId
+            payReq.partnerId = partnerId
+            payReq.prepayId = prepayId
+            payReq.packageValue = packageValue
+            payReq.nonceStr = nonceStr
+            payReq.timeStamp = timeStamp.toLong()
+            payReq.sign = sign
+            
+            val success = wxApi?.sendReq(payReq) ?: false
+            
+            activity?.runOnUiThread {
+              val response = mutableMapOf<String, Any>()
+              response["success"] = success
+              response["message"] = if (success) "Payment request sent successfully" else "Failed to send payment request"
+              result.success(response)
+            }
+          } catch (e: Exception) {
+            activity?.runOnUiThread {
+              val response = mutableMapOf<String, Any>()
+              response["success"] = false
+              response["message"] = "Payment failed: ${e.message}"
+              result.success(response)
+            }
+          }
+        }
+      }
+      "queryOrder" -> {
+        val orderId = call.argument<String>("orderId") ?: ""
+        
+        if (orderId.isEmpty()) {
+          result.error("INVALID_ORDER_ID", "Order ID cannot be empty", null)
+          return
+        }
+        
+        // Note: WeChat SDK doesn't provide direct order query API
+        // This should be implemented on server side
+        executor.execute {
+          try {
+            // In real implementation, you would need to:
+            // 1. Call your server API to query order status
+            // 2. Server should call WeChat's order query API
+            // 3. Return the result to client
+            
+            activity?.runOnUiThread {
+              val response = mutableMapOf<String, Any>()
+              response["success"] = false
+              response["message"] = "Order query requires server-side implementation. Please implement order query on your server using WeChat's order query API."
+              response["orderId"] = orderId
+              response["status"] = "UNKNOWN"
+              result.success(response)
+            }
+          } catch (e: Exception) {
+            activity?.runOnUiThread {
+              val response = mutableMapOf<String, Any>()
+              response["success"] = false
+              response["message"] = "Query failed: ${e.message}"
+              response["orderId"] = orderId
+              response["status"] = "ERROR"
+              result.success(response)
+            }
+          }
+        }
+      }
+      "isWechatInstalled" -> {
+        val isInstalled = isWechatAppInstalled()
+        result.success(isInstalled)
+      }
+      else -> {
+        result.notImplemented()
+      }
+    }
+  }
+
+  private fun isWechatAppInstalled(): Boolean {
+    return try {
+      val packageManager = context.packageManager
+      packageManager.getPackageInfo("com.tencent.mm", PackageManager.GET_ACTIVITIES)
+      true
+    } catch (e: Exception) {
+      false
+    }
+  }
+
+  override fun onDetachedFromEngine(binding: FlutterPlugin.FlutterPluginBinding) {
+    channel.setMethodCallHandler(null)
+  }
+
+  override fun onAttachedToActivity(binding: ActivityPluginBinding) {
+    activity = binding.activity
+  }
+
+  override fun onDetachedFromActivityForConfigChanges() {
+    activity = null
+  }
+
+  override fun onReattachedToActivityForConfigChanges(binding: ActivityPluginBinding) {
+    activity = binding.activity
+  }
+
+  override fun onDetachedFromActivity() {
+    activity = null
+  }
+}
