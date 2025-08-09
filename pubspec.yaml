@@ -66,8 +66,8 @@ flutter:
       android:
         package: com.plaud.flutter_wechatpay_plugin
         pluginClass: FlutterWechatpayPlugin
-      ios:
-        pluginClass: FlutterWechatpayPlugin
+      # ios:
+      #   pluginClass: FlutterWechatpayPlugin
 
   # To add assets to your plugin package, add an assets section, like this:
   # assets:
