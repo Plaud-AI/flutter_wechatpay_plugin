@@ -45,21 +45,11 @@ class FlutterWechatpayPlugin {
     required String sign,
   }) {
     return FlutterWechatpayPluginPlatform.instance.pay(
-      partnerId: partnerId,
       prepayId: prepayId,
       packageValue: packageValue,
       nonceStr: nonceStr,
       timeStamp: timeStamp,
       sign: sign,
-    );
-  }
-
-  /// Query WeChat Pay order
-  Future<Map<String, dynamic>> queryOrder({
-    required String orderId,
-  }) {
-    return FlutterWechatpayPluginPlatform.instance.queryOrder(
-      orderId: orderId,
     );
   }
 

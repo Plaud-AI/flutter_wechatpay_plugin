@@ -27,7 +27,6 @@ class MockFlutterWechatpayPluginPlatform
 
   @override
   Future<Map<String, dynamic>> pay({
-    required String partnerId,
     required String prepayId,
     required String packageValue,
     required String nonceStr,
@@ -35,12 +34,6 @@ class MockFlutterWechatpayPluginPlatform
     required String sign,
   }) =>
       Future.value({'success': true, 'message': 'Payment successful'});
-
-  @override
-  Future<Map<String, dynamic>> queryOrder({
-    required String orderId,
-  }) =>
-      Future.value({'success': true, 'orderId': orderId, 'status': 'SUCCESS'});
 
   @override
   Future<bool> isWechatInstalled() => Future.value(true);
@@ -134,23 +127,6 @@ void main() {
     expect(result, isA<Map<String, dynamic>>());
     expect(result['success'], true);
     expect(result['message'], 'Payment successful');
-  });
-
-  test('queryOrder', () async {
-    FlutterWechatpayPlugin flutterWechatpayPlugin = FlutterWechatpayPlugin();
-    MockFlutterWechatpayPluginPlatform fakePlatform =
-        MockFlutterWechatpayPluginPlatform();
-    FlutterWechatpayPluginPlatform.instance = fakePlatform;
-
-    final orderId = 'test_order_id';
-    final result = await flutterWechatpayPlugin.queryOrder(
-      orderId: orderId,
-    );
-
-    expect(result, isA<Map<String, dynamic>>());
-    expect(result['success'], true);
-    expect(result['orderId'], orderId);
-    expect(result['status'], 'SUCCESS');
   });
 
   test('isWechatInstalled', () async {
