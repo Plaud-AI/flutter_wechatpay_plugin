@@ -81,7 +81,6 @@ void main() {
 
   test('pay', () async {
     final result = await platform.pay(
-      partnerId: 'test_partner_id',
       prepayId: 'test_prepay_id',
       packageValue: 'Sign=WXPay',
       nonceStr: 'test_nonce_str',
@@ -92,18 +91,6 @@ void main() {
     expect(result, isA<Map<String, dynamic>>());
     expect(result['success'], true);
     expect(result['message'], 'Payment successful');
-  });
-
-  test('queryOrder', () async {
-    final orderId = 'test_order_id';
-    final result = await platform.queryOrder(
-      orderId: orderId,
-    );
-
-    expect(result, isA<Map<String, dynamic>>());
-    expect(result['success'], true);
-    expect(result['orderId'], orderId);
-    expect(result['status'], 'SUCCESS');
   });
 
   test('isWechatInstalled', () async {

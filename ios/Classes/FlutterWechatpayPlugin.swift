@@ -24,8 +24,6 @@ public class FlutterWechatpayPlugin: NSObject, FlutterPlugin {
       result(notSupportedPlatformError())
     case "pay":
       result(notSupportedPlatformError())
-    case "queryOrder":
-      result(notSupportedPlatformError())
     case "isWechatInstalled":
       result(notSupportedPlatformError())
     default:

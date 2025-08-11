@@ -86,7 +86,6 @@ class FlutterWechatpayPlugin: FlutterPlugin, MethodCallHandler, ActivityAware {
         }
       }
       "pay" -> {
-        val partnerId = call.argument<String>("partnerId") ?: ""
         val prepayId = call.argument<String>("prepayId") ?: ""
         val packageValue = call.argument<String>("packageValue") ?: ""
         val nonceStr = call.argument<String>("nonceStr") ?: ""
@@ -114,11 +113,11 @@ class FlutterWechatpayPlugin: FlutterPlugin, MethodCallHandler, ActivityAware {
           try {
             val payReq = PayReq()
             payReq.appId = this.appId
-            payReq.partnerId = partnerId
+            payReq.partnerId = this.partnerId
             payReq.prepayId = prepayId
             payReq.packageValue = packageValue
             payReq.nonceStr = nonceStr
-            payReq.timeStamp = timeStamp.toLong()
+            payReq.timeStamp = timeStamp
             payReq.sign = sign
             
             val success = wxApi?.sendReq(payReq) ?: false
@@ -134,43 +133,6 @@ class FlutterWechatpayPlugin: FlutterPlugin, MethodCallHandler, ActivityAware {
               val response = mutableMapOf<String, Any>()
               response["success"] = false
               response["message"] = "Payment failed: ${e.message}"
-              result.success(response)
-            }
-          }
-        }
-      }
-      "queryOrder" -> {
-        val orderId = call.argument<String>("orderId") ?: ""
-        
-        if (orderId.isEmpty()) {
-          result.error("INVALID_ORDER_ID", "Order ID cannot be empty", null)
-          return
-        }
-        
-        // Note: WeChat SDK doesn't provide direct order query API
-        // This should be implemented on server side
-        executor.execute {
-          try {
-            // In real implementation, you would need to:
-            // 1. Call your server API to query order status
-            // 2. Server should call WeChat's order query API
-            // 3. Return the result to client
-            
-            activity?.runOnUiThread {
-              val response = mutableMapOf<String, Any>()
-              response["success"] = false
-              response["message"] = "Order query requires server-side implementation. Please implement order query on your server using WeChat's order query API."
-              response["orderId"] = orderId
-              response["status"] = "UNKNOWN"
-              result.success(response)
-            }
-          } catch (e: Exception) {
-            activity?.runOnUiThread {
-              val response = mutableMapOf<String, Any>()
-              response["success"] = false
-              response["message"] = "Query failed: ${e.message}"
-              response["orderId"] = orderId
-              response["status"] = "ERROR"
               result.success(response)
             }
           }

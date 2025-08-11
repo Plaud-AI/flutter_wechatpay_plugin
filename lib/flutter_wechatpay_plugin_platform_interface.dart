@@ -13,7 +13,8 @@ abstract class FlutterWechatpayPluginPlatform extends PlatformInterface {
 
   static final Object _token = Object();
 
-  static FlutterWechatpayPluginPlatform _instance = MethodChannelFlutterWechatpayPlugin();
+  static FlutterWechatpayPluginPlatform _instance =
+      MethodChannelFlutterWechatpayPlugin();
 
   /// The default instance of [FlutterWechatpayPluginPlatform] to use.
   ///
@@ -43,7 +44,6 @@ abstract class FlutterWechatpayPluginPlatform extends PlatformInterface {
 
   /// Initiate WeChat Pay payment
   Future<Map<String, dynamic>> pay({
-    required String partnerId,
     required String prepayId,
     required String packageValue,
     required String nonceStr,
@@ -51,13 +51,6 @@ abstract class FlutterWechatpayPluginPlatform extends PlatformInterface {
     required String sign,
   }) {
     throw UnimplementedError('pay() has not been implemented.');
-  }
-
-  /// Query WeChat Pay order
-  Future<Map<String, dynamic>> queryOrder({
-    required String orderId,
-  }) {
-    throw UnimplementedError('queryOrder() has not been implemented.');
   }
 
   /// Check if WeChat is installed

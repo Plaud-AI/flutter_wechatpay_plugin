@@ -9,14 +9,16 @@ import 'package:flutter/services.dart';
 import 'flutter_wechatpay_plugin_platform_interface.dart';
 
 /// An implementation of [FlutterWechatpayPluginPlatform] that uses method channels.
-class MethodChannelFlutterWechatpayPlugin extends FlutterWechatpayPluginPlatform {
+class MethodChannelFlutterWechatpayPlugin
+    extends FlutterWechatpayPluginPlatform {
   /// The method channel used to interact with the native platform.
   @visibleForTesting
   final methodChannel = const MethodChannel('flutter_wechatpay_plugin');
 
   @override
   Future<String?> getPlatformVersion() async {
-    final version = await methodChannel.invokeMethod<String>('getPlatformVersion');
+    final version =
+        await methodChannel.invokeMethod<String>('getPlatformVersion');
     return version;
   }
 
@@ -36,30 +38,19 @@ class MethodChannelFlutterWechatpayPlugin extends FlutterWechatpayPluginPlatform
 
   @override
   Future<Map<String, dynamic>> pay({
-    required String partnerId,
     required String prepayId,
     required String packageValue,
     required String nonceStr,
     required String timeStamp,
     required String sign,
   }) async {
-    final result = await methodChannel.invokeMethod<Map<dynamic, dynamic>>('pay', {
-      'partnerId': partnerId,
+    final result =
+        await methodChannel.invokeMethod<Map<dynamic, dynamic>>('pay', {
       'prepayId': prepayId,
       'packageValue': packageValue,
       'nonceStr': nonceStr,
       'timeStamp': timeStamp,
       'sign': sign,
-    });
-    return Map<String, dynamic>.from(result ?? {});
-  }
-
-  @override
-  Future<Map<String, dynamic>> queryOrder({
-    required String orderId,
-  }) async {
-    final result = await methodChannel.invokeMethod<Map<dynamic, dynamic>>('queryOrder', {
-      'orderId': orderId,
     });
     return Map<String, dynamic>.from(result ?? {});
   }
