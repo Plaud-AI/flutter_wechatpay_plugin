@@ -19,12 +19,20 @@
       android:theme="@android:style/Theme.Translucent.NoTitleBar" />
       
     <!-- WeChat Pay Callback Activity -->
-    <activity
+    <!-- <activity
       android:name="com.tencent.mm.opensdk.openapi.WXPayEntryActivity"
       android:exported="true"
       android:launchMode="singleTop"
       android:taskAffinity="com.tencent.mm"
-      android:theme="@android:style/Theme.Translucent.NoTitleBar" />
+      android:theme="@android:style/Theme.Translucent.NoTitleBar" /> -->
+    <activity
+      android:name=".wxapi.WXEntryActivity"
+      android:label="@string/app_name"
+      android:theme="@android:style/Theme.Translucent.NoTitleBar"
+      android:exported="true"
+      android:taskAffinity="ai.plaud.android.plaud.zh"
+      android:launchMode="singleTask">
+    </activity>
   </application>
   
 </manifest>
