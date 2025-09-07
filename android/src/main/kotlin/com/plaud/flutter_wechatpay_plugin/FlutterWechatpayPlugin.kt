@@ -178,8 +178,10 @@ class FlutterWechatpayPlugin: FlutterPlugin, MethodCallHandler, ActivityAware {
             val req = WXOpenBusinessWebview.Req()
             req.businessType = 12 // 委托代扣签约 (Contract signing business type)
             
-            // The pre_entrustweb_id is passed via the extInfo field on Android
-            req.extInfo = "pre_entrustweb_id=$preEntrustwebId"
+            // On Android, the parameters are passed in a HashMap to the queryInfo property.
+            val queryInfo = HashMap<String, String>()
+            queryInfo["pre_entrustweb_id"] = preEntrustwebId
+            req.queryInfo = queryInfo
             
             val success = wxApi?.sendReq(req) ?: false
             
