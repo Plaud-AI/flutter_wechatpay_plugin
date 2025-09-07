@@ -60,4 +60,13 @@ class FlutterWechatpayPlugin {
   Future<bool> isWechatInstalled() {
     return FlutterWechatpayPluginPlatform.instance.isWechatInstalled();
   }
+
+  /// Sign WeChat Pay contract
+  Future<Map<String, dynamic>> signContract({
+    required String preEntrustwebId,
+  }) {
+    return FlutterWechatpayPluginPlatform.instance.signContract(
+      preEntrustwebId: preEntrustwebId,
+    );
+  }
 }
