@@ -38,8 +38,6 @@ class MethodChannelFlutterWechatpayPlugin
 
   @override
   Future<Map<String, dynamic>> pay({
-    required String appId,
-    required String partnerId,
     required String prepayId,
     required String packageValue,
     required String nonceStr,
@@ -48,8 +46,6 @@ class MethodChannelFlutterWechatpayPlugin
   }) async {
     final result =
         await methodChannel.invokeMethod<Map<dynamic, dynamic>>('pay', {
-          'appId': appId,
-          'partnerId': partnerId,
       'prepayId': prepayId,
       'packageValue': packageValue,
       'nonceStr': nonceStr,

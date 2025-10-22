@@ -37,8 +37,6 @@ class FlutterWechatpayPlugin {
 
   /// Initiate WeChat Pay payment
   Future<Map<String, dynamic>> pay({
-    required String appId,
-    required String partnerId,
     required String prepayId,
     required String packageValue,
     required String nonceStr,
@@ -46,8 +44,6 @@ class FlutterWechatpayPlugin {
     required String sign,
   }) {
     return FlutterWechatpayPluginPlatform.instance.pay(
-      appId: appId,
-      partnerId: partnerId,
       prepayId: prepayId,
       packageValue: packageValue,
       nonceStr: nonceStr,

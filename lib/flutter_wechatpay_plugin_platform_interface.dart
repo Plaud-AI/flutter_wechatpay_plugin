@@ -44,8 +44,6 @@ abstract class FlutterWechatpayPluginPlatform extends PlatformInterface {
 
   /// Initiate WeChat Pay payment
   Future<Map<String, dynamic>> pay({
-    required String appId,
-    required String partnerId,
     required String prepayId,
     required String packageValue,
     required String nonceStr,

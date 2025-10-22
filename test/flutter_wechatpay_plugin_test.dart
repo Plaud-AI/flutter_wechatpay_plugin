@@ -37,6 +37,12 @@ class MockFlutterWechatpayPluginPlatform
 
   @override
   Future<bool> isWechatInstalled() => Future.value(true);
+
+  @override
+  Future<Map<String, dynamic>> signContract({
+    required String preEntrustwebId,
+  }) =>
+      Future.value({'success': true, 'message': 'Contract signed successfully'});
 }
 
 void main() {
@@ -116,7 +122,6 @@ void main() {
     FlutterWechatpayPluginPlatform.instance = fakePlatform;
 
     final result = await flutterWechatpayPlugin.pay(
-      partnerId: 'test_partner_id',
       prepayId: 'test_prepay_id',
       packageValue: 'Sign=WXPay',
       nonceStr: 'test_nonce_str',

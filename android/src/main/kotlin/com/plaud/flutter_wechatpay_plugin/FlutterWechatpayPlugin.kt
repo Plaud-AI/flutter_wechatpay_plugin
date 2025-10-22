@@ -19,17 +19,12 @@ import io.flutter.plugin.common.MethodChannel.MethodCallHandler
 import io.flutter.plugin.common.MethodChannel.Result
 import io.flutter.plugin.common.PluginRegistry
 import com.tencent.mm.opensdk.modelpay.PayReq
-import com.tencent.mm.opensdk.modelbase.BaseReq
-import com.tencent.mm.opensdk.modelbiz.WXLaunchMiniProgram
-import com.tencent.mm.opensdk.modelbiz.SubscribeMessage
 import com.tencent.mm.opensdk.modelbiz.WXOpenBusinessWebview
 import com.tencent.mm.opensdk.openapi.IWXAPI
 import com.tencent.mm.opensdk.openapi.WXAPIFactory
 import java.util.concurrent.Executors
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.TimeUnit
-import java.net.URLEncoder
-import java.nio.charset.StandardCharsets
 
 /** FlutterWechatpayPlugin - WeChat Pay payment integration for Flutter */
 class FlutterWechatpayPlugin: FlutterPlugin, MethodCallHandler, ActivityAware {
