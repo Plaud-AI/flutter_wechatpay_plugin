@@ -65,4 +65,11 @@ abstract class FlutterWechatpayPluginPlatform extends PlatformInterface {
   }) {
     throw UnimplementedError('registerApp() has not been implemented.');
   }
+
+  /// Sign WeChat Pay contract
+  Future<Map<String, dynamic>> signContract({
+    required String preEntrustwebId,
+  }) {
+    throw UnimplementedError('signContract() has not been implemented.');
+  }
 }

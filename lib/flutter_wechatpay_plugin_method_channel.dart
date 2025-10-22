@@ -72,4 +72,15 @@ class MethodChannelFlutterWechatpayPlugin
     });
     return result ?? false;
   }
+
+  @override
+  Future<Map<String, dynamic>> signContract({
+    required String preEntrustwebId,
+  }) async {
+    final result =
+        await methodChannel.invokeMethod<Map<dynamic, dynamic>>('signContract', {
+      'preEntrustwebId': preEntrustwebId,
+    });
+    return Map<String, dynamic>.from(result ?? {});
+  }
 }

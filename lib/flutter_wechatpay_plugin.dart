@@ -37,7 +37,6 @@ class FlutterWechatpayPlugin {
 
   /// Initiate WeChat Pay payment
   Future<Map<String, dynamic>> pay({
-    required String partnerId,
     required String prepayId,
     required String packageValue,
     required String nonceStr,
@@ -56,5 +55,14 @@ class FlutterWechatpayPlugin {
   /// Check if WeChat is installed
   Future<bool> isWechatInstalled() {
     return FlutterWechatpayPluginPlatform.instance.isWechatInstalled();
+  }
+
+  /// Sign WeChat Pay contract
+  Future<Map<String, dynamic>> signContract({
+    required String preEntrustwebId,
+  }) {
+    return FlutterWechatpayPluginPlatform.instance.signContract(
+      preEntrustwebId: preEntrustwebId,
+    );
   }
 }

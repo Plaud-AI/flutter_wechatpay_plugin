@@ -21,10 +21,9 @@
     <!-- WeChat Pay Callback Activity -->
     <activity
       android:name="com.tencent.mm.opensdk.openapi.WXPayEntryActivity"
+      android:theme="@android:style/Theme.Translucent.NoTitleBar"
       android:exported="true"
-      android:launchMode="singleTop"
-      android:taskAffinity="com.tencent.mm"
-      android:theme="@android:style/Theme.Translucent.NoTitleBar" />
+      android:launchMode="singleTop" />
   </application>
   
 </manifest>

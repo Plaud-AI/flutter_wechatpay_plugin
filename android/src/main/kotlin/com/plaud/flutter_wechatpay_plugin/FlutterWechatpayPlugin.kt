@@ -19,6 +19,7 @@ import io.flutter.plugin.common.MethodChannel.MethodCallHandler
 import io.flutter.plugin.common.MethodChannel.Result
 import io.flutter.plugin.common.PluginRegistry
 import com.tencent.mm.opensdk.modelpay.PayReq
+import com.tencent.mm.opensdk.modelbiz.WXOpenBusinessWebview
 import com.tencent.mm.opensdk.openapi.IWXAPI
 import com.tencent.mm.opensdk.openapi.WXAPIFactory
 import java.util.concurrent.Executors
@@ -141,6 +142,61 @@ class FlutterWechatpayPlugin: FlutterPlugin, MethodCallHandler, ActivityAware {
       "isWechatInstalled" -> {
         val isInstalled = isWechatAppInstalled()
         result.success(isInstalled)
+      }
+      "signContract" -> {
+        val preEntrustwebId = call.argument<String>("preEntrustwebId") ?: ""
+        
+        if (preEntrustwebId.isEmpty()) {
+          result.error("INVALID_PARAMETERS", "preEntrustwebId is required", null)
+          return
+        }
+        
+        if (activity == null) {
+          result.error("NO_ACTIVITY", "Activity is not available", null)
+          return
+        }
+        
+        if (wxApi == null) {
+          result.error("WECHAT_NOT_INITIALIZED", "WeChat API is not initialized", null)
+          return
+        }
+        
+        // Check if WeChat is installed before proceeding
+        if (!isWechatAppInstalled()) {
+          result.error("WECHAT_NOT_INSTALLED", "WeChat app is not installed", null)
+          return
+        }
+        
+        // Execute contract signing
+        executor.execute {
+          try {
+            val req = WXOpenBusinessWebview.Req()
+            req.businessType = 12 // 委托代扣签约 (Contract signing business type)
+            
+            // On Android, the parameters are passed in a HashMap to the queryInfo property.
+            val queryInfo = HashMap<String, String>()
+            queryInfo["pre_entrustweb_id"] = preEntrustwebId
+            req.queryInfo = queryInfo
+            
+            val success = wxApi?.sendReq(req) ?: false
+            
+            activity?.runOnUiThread {
+              val response = mutableMapOf<String, Any>()
+              response["success"] = success
+              response["message"] = if (success) "Contract signing request sent successfully" else "Failed to send contract signing request"
+              response["preEntrustwebId"] = preEntrustwebId
+              result.success(response)
+            }
+          } catch (e: Exception) {
+            activity?.runOnUiThread {
+              val response = mutableMapOf<String, Any>()
+              response["success"] = false
+              response["message"] = "Contract signing failed: ${e.message}"
+              response["error"] = e.javaClass.simpleName
+              result.success(response)
+            }
+          }
+        }
       }
       else -> {
         result.notImplemented()
